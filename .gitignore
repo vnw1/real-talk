@@ -64,3 +64,5 @@ env.sh
 .next
 
 src/public/bower_components
+
+.vscode
