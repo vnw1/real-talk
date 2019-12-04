@@ -1,0 +1,39 @@
+{
+  "name": "real-talk",
+  "version": "1.0.0",
+  "description": "Messenger Application",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "babel-node src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vnw1/real-talk.git"
+  },
+  "author": "Huy Le",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vnw1/real-talk/issues"
+  },
+  "homepage": "https://github.com/vnw1/real-talk#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "bluebird": "^3.5.3",
+    "body-parser": "^1.18.2",
+    "connect-flash": "^0.1.1",
+    "connect-mongo": "^2.0.1",
+    "ejs": "^2.5.7",
+    "express": "^4.17.1",
+    "express-ejs-extend": "0.0.1",
+    "express-session": "^1.15.6",
+    "express-validator": "^4.3.0",
+    "mongoose": "^4.13.9",
+    "nodemailer": "^4.4.2",
+    "uuid": "^3.3.2"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0"
+  }
+}
