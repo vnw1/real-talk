@@ -20,3 +20,8 @@ export MAIL_PORT=xxx
 export FB_APP_ID=xxx
 export FB_APP_SECRET=xxx
 export FB_CALLBACK_URL=xxx
+
+# Config google app
+export GG_APP_ID=xxx
+export GG_APP_SECRET=xxx
+export GG_CALLBACK_URL=xxx
