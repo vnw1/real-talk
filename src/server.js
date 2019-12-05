@@ -7,31 +7,69 @@ import connectFlash from "connect-flash";
 import configSession from "./config/session";
 import passport from "passport";
 
-// Init app
-let app = express();
+import pem from "pem";
+import https from "https";
 
-// Connect to MongoDB
-ConnectDB();
+pem.createCertificate({ days: 1, selfSigned: true }, function (err, keys) {
+    if (err) {
+      throw err;
+    }
+    // Init app
+    let app = express();
 
-// Config session
-configSession(app);
+    // Connect to MongoDB
+    ConnectDB();
 
-// Config view engine
-configViewEngine(app);
+    // Config session
+    configSession(app);
 
-// Enable post data for request
-app.use(bodyParser.urlencoded({extended: true}));
+    // Config view engine
+    configViewEngine(app);
 
-// Enable flash message
-app.use(connectFlash());
+    // Enable post data for request
+    app.use(bodyParser.urlencoded({extended: true}));
 
-// Config passport js
-app.use(passport.initialize());
-app.use(passport.session());
+    // Enable flash message
+    app.use(connectFlash());
 
-// Init routes
-initRoutes(app);
+    // Config passport js
+    app.use(passport.initialize());
+    app.use(passport.session());
 
-app.listen(process.env.APP_PORT, process.env.APP_HOST, () => {
-    console.log(`hello ban ${process.env.APP_HOST}`);
-})
+    // Init routes
+    initRoutes(app);
+   
+    https.createServer({ key: keys.serviceKey, cert: keys.certificate }, app).listen(process.env.APP_PORT, process.env.APP_HOST, () => {
+        console.log(`hello ban ${process.env.APP_HOST}`);
+    });
+  });
+  
+
+// // Init app
+// let app = express();
+
+// // Connect to MongoDB
+// ConnectDB();
+
+// // Config session
+// configSession(app);
+
+// // Config view engine
+// configViewEngine(app);
+
+// // Enable post data for request
+// app.use(bodyParser.urlencoded({extended: true}));
+
+// // Enable flash message
+// app.use(connectFlash());
+
+// // Config passport js
+// app.use(passport.initialize());
+// app.use(passport.session());
+
+// // Init routes
+// initRoutes(app);
+
+// app.listen(process.env.APP_PORT, process.env.APP_HOST, () => {
+//     console.log(`hello ban ${process.env.APP_HOST}`);
+// });

@@ -15,3 +15,8 @@ export MAIL_USER=xxx
 export MAIL_PASSWORD=xxx
 export MAIL_HOST=xxx
 export MAIL_PORT=xxx
+
+# Config facebook app
+export FB_APP_ID=xxx
+export FB_APP_SECRET=xxx
+export FB_CALLBACK_URL=xxx
