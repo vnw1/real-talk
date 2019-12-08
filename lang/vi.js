@@ -11,7 +11,9 @@ export const transErrors = {
     account_not_active: "Tài khoản chưa kích hoạt email",
     token_undefined: "Token không tồn tại",
     login_failed: "Sai tài khoản hoặc mật khẩu",
-    server_error: "Có lỗi phía hệ thống, vui lòng liên hệ bộ phận hỗ trợ"
+    server_error: "Có lỗi phía hệ thống, vui lòng liên hệ bộ phận hỗ trợ",
+    avatar_type: "Kiểu file không hợp lệ, chỉ chấp nhận jpg & png",
+    avatar_size: "Ảnh upload tối đa 1MB"
 };
 
 export const transSuccess = {
@@ -22,7 +24,8 @@ export const transSuccess = {
     loginSuccess: (username) => {
         return `Xin chào ${username}`;
     },
-    logout_success: "Đăng xuất tài khoản thành công"
+    logout_success: "Đăng xuất tài khoản thành công",
+    avatar_updated: "Cập nhật ảnh đại diện thành công"
 };
 
 export const transMail = {
