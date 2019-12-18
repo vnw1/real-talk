@@ -25,7 +25,6 @@ let addNewContact = (io) => {
         // remove socket id when socket disconnected
         clients = removeSocketIdFromArray(clients, socket.request.user._id, socket);
        });
-       console.log(clients);
    }); 
 }
 
