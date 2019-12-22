@@ -67,9 +67,9 @@ let getContacts = (currentUserId) => {
 
             let users = contacts.map(async (contact) => {
                 if (contact.contactId == currentUserId) {
-                return await userModel.findUserById(contact.userId);
+                    return await userModel.getNormalUserDataById(contact.userId);
                 } else {
-                    return await userModel.findUserById(contact.contactId);
+                    return await userModel.getNormalUserDataById(contact.contactId);
                 }
             });
 
@@ -85,7 +85,7 @@ let getContactsSent = (currentUserId) => {
         try {
             let contacts = await contactModel.getContactsSent(currentUserId, LIMIT_NUMBER_TAKEN);
             let users = contacts.map(async (contact) => {
-                return await userModel.findUserById(contact.contactId);
+                return await userModel.getNormalUserDataById(contact.contactId);
             });
 
             resolve(await Promise.all(users));
@@ -100,7 +100,7 @@ let getContactsReceived = (currentUserId) => {
         try {
             let contacts = await contactModel.getContactsReceived(currentUserId, LIMIT_NUMBER_TAKEN);
             let users = contacts.map(async (contact) => {
-                return await userModel.findUserById(contact.userId);
+                return await userModel.getNormalUserDataById(contact.userId);
             });
 
             resolve(await Promise.all(users));
@@ -143,6 +143,73 @@ let countAllContactsReceived = (currentUserId) => {
     });
 };
 
+/**
+ * Read more contacts, 10 items one time
+ * @param {string} currentUserId 
+ * @param {number} skipNumberContacts 
+ */
+let readMoreContacts = (currentUserId, skipNumberContacts) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let newContacts = await contactModel.readMoreContacts(currentUserId, skipNumberContacts, LIMIT_NUMBER_TAKEN);
+
+            let users = newContacts.map(async (contact) => {
+                if (contact.contactId == currentUserId) {
+                return await userModel.getNormalUserDataById(contact.userId);
+                } else {
+                    return await userModel.getNormalUserDataById(contact.contactId);
+                }
+            });
+
+            resolve(await Promise.all(users));
+        } catch (error) {
+            reject(error);
+        }
+    });
+};
+
+/**
+ * Read more sent contacts, 10 items one time
+ * @param {string} currentUserId 
+ * @param {number} skipNumberContacts 
+ */
+let readMoreContactsSent = (currentUserId, skipNumberContacts) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let newContacts = await contactModel.readMoreContactsSent(currentUserId, skipNumberContacts, LIMIT_NUMBER_TAKEN);
+
+            let users = newContacts.map(async (contact) => {
+                return await userModel.getNormalUserDataById(contact.contactId);
+            });
+
+            resolve(await Promise.all(users));
+        } catch (error) {
+            reject(error);
+        }
+    });
+};
+
+/**
+ * Read more received contacts, 10 items one time
+ * @param {string} currentUserId 
+ * @param {number} skipNumberContacts 
+ */
+let readMoreContactsReceived = (currentUserId, skipNumberContacts) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let newContacts = await contactModel.readMoreContactsReceived(currentUserId, skipNumberContacts, LIMIT_NUMBER_TAKEN);
+
+            let users = newContacts.map(async (contact) => {
+                return await userModel.getNormalUserDataById(contact.userId);
+            });
+
+            resolve(await Promise.all(users));
+        } catch (error) {
+            reject(error);
+        }
+    });
+};
+
 module.exports = {
     findUsersContact: findUsersContact,
     addNew: addNew,
@@ -152,5 +219,8 @@ module.exports = {
     getContactsReceived: getContactsReceived,
     countAllContacts: countAllContacts,
     countAllContactsSent: countAllContactsSent,
-    countAllContactsReceived: countAllContactsReceived
+    countAllContactsReceived: countAllContactsReceived,
+    readMoreContacts: readMoreContacts,
+    readMoreContactsSent: readMoreContactsSent,
+    readMoreContactsReceived: readMoreContactsReceived
 };
