@@ -139,6 +139,51 @@ ContactSchema.statics = {
                 {"status": false}
             ]
         }).exec();
+    },
+    /**
+     * Read more contacts by userId, skip, limit
+     * @param {string} userId 
+     * @param {number} skip 
+     * @param {number} limit 
+     */
+    readMoreContacts(userId, skip, limit) {
+        return this.find({
+            $and: [
+                {$or: [
+                    {"userId": userId},
+                    {"contactId": userId}
+                ]},
+                {"status": true}
+            ]
+        }).sort({"createdAt": -1}).skip(skip).limit(limit).exec();
+    },
+    /**
+     * Read more sent contacts by userId, skip, limit
+     * @param {string} userId 
+     * @param {number} skip 
+     * @param {number} limit 
+     */
+    readMoreContactsSent(userId, skip, limit) {
+        return this.find({
+            $and: [
+                {"userId": userId},
+                {"status": false}
+            ]
+        }).sort({"createdAt": -1}).skip(skip).limit(limit).exec();
+    },
+    /**
+     * Read more received contacts by userId, skip, limit
+     * @param {string} userId 
+     * @param {number} skip 
+     * @param {number} limit 
+     */
+    readMoreContactsReceived(userId, skip, limit) {
+        return this.find({
+            $and: [
+                {"contactId": userId},
+                {"status": false}
+            ]
+        }).sort({"createdAt": -1}).skip(skip).limit(limit).exec();
     }
 }
 

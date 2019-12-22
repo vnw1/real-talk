@@ -23,7 +23,7 @@ let findUsersContact = async (req, res) => {
     } catch (error) {
         return res.status(500).send(error);
     }
-}
+};
 
 let addNew = async (req, res) => {
     try {
@@ -35,7 +35,7 @@ let addNew = async (req, res) => {
     } catch (error) {
         return res.status(500).send(error);
     }
-}
+};
 
 let removeRequestContact = async (req, res) => {
     try {
@@ -47,10 +47,52 @@ let removeRequestContact = async (req, res) => {
     } catch (error) {
         return res.status(500).send(error);
     }
-}
+};
+
+let readMoreContacts = async (req, res) => {
+    try {
+        // get skip number from query param
+        let skipNumberContacts = +(req.query.skipNumber);
+        // get more item
+        let newContactUsers = await contact.readMoreContacts(req.user._id, skipNumberContacts);
+
+        return res.status(200).send(newContactUsers);
+    } catch (error) {
+        return res.status(500).send(error);
+    }
+};
+
+let readMoreContactsSent = async (req, res) => {
+    try {
+        // get skip number from query param
+        let skipNumberContacts = +(req.query.skipNumber);
+        // get more item
+        let newContactUsers = await contact.readMoreContactsSent(req.user._id, skipNumberContacts);
+
+        return res.status(200).send(newContactUsers);
+    } catch (error) {
+        return res.status(500).send(error);
+    }
+};
+
+let readMoreContactsReceived = async (req, res) => {
+    try {
+        // get skip number from query param
+        let skipNumberContacts = +(req.query.skipNumber);
+        // get more item
+        let newContactUsers = await contact.readMoreContactsReceived(req.user._id, skipNumberContacts);
+
+        return res.status(200).send(newContactUsers);
+    } catch (error) {
+        return res.status(500).send(error);
+    }
+};
 
 module.exports = {
     findUsersContact: findUsersContact,
     addNew: addNew,
-    removeRequestContact: removeRequestContact
+    removeRequestContact: removeRequestContact,
+    readMoreContacts: readMoreContacts,
+    readMoreContactsSent: readMoreContactsSent,
+    readMoreContactsReceived: readMoreContactsReceived
 };
