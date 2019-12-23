@@ -5,7 +5,10 @@ function addContact() {
             if (data.success) {
              $("#find-user").find(`div.user-add-new-contact[data-uid = ${targetId}]`).hide();   
              $("#find-user").find(`div.user-remove-request-contact-sent[data-uid = ${targetId}]`).css("display", "inline-block");   
-             increaseNumberNotifContact("count-request-contact-sent");
+
+             increaseNumberNotification("noti_contact_counter", 1); // js/calculateNotification.js
+
+             increaseNumberNotifContact("count-request-contact-sent"); // js/calculateNotifContact.js
 
              // Add html element into tab sent request
              let userInfoHtml = $("#find-user").find(`ul li[data-uid=${targetId}]`).get(0).outerHTML;
@@ -29,8 +32,8 @@ socket.on("response-add-new-contact", function (user) {
 
     increaseNumberNotifContact("count-request-contact-received");
 
-    increaseNumberNotification("noti_contact_counter", 1);
-    increaseNumberNotification("noti_counter", 1);
+    increaseNumberNotification("noti_contact_counter", 1); // js/calculateNotification.js
+    increaseNumberNotification("noti_counter", 1); // js/calculateNotifContact.js
 
     // Add html element into tab received request
     let userInfoHtml = `<li class="_contactList" data-uid="${user.id}">
