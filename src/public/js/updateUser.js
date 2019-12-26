@@ -331,7 +331,7 @@ $(document).ready(function() {
                 return false;
             }
             callUpdateUserPassword();
-          })
+          });
     });
 
     $("#input-btn-cancel-update-user-password").bind("click", function() {
