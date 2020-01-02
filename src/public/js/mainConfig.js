@@ -106,17 +106,6 @@ function gridPhotos(layoutNumber) {
   });
 }
 
-function showButtonGroupChat() {
-  $('#select-type-chat').bind('change', function() {
-    if ($(this).val() === 'group-chat') {
-      $('.create-group-chat').show();
-      // Do something...
-    } else {
-      $('.create-group-chat').hide();
-    }
-  });
-}
-
 function addFriendsToGroup() {
   $('ul#group-chat-friends').find('div.add-user').bind('click', function() {
     let uid = $(this).data('uid');
@@ -152,6 +141,19 @@ function flashMasterNotify() {
   }
 }
 
+function changeTypeChat() {
+  $("#select-type-chat").bind("change", function () {
+    let optionSelected = $("option:selected", this);
+    optionSelected.tab("show");
+
+    if ($(this).val() === "user-chat") {
+        $(".create-group-chat").hide();
+    } else {
+      $(".create-group-chat").show();
+    }
+  });
+}
+
 $(document).ready(function() {
   // Hide số thông báo trên đầu icon mở modal contact
   showModalContacts();
@@ -169,9 +171,6 @@ $(document).ready(function() {
   // Icon loading khi chạy ajax
   ajaxLoading();
 
-  // Hiển thị button mở modal tạo nhóm trò chuyện
-  showButtonGroupChat();
-
   // Hiển thị hình ảnh grid slide trong modal tất cả ảnh, tham số truyền vào là số ảnh được hiển thị trên 1 hàng.
   // Tham số chỉ được phép trong khoảng từ 1 đến 5
   gridPhotos(5);
@@ -184,4 +183,7 @@ $(document).ready(function() {
 
   // Flash message ở màn hình master
   flashMasterNotify();
+
+  // Change type of chat
+  changeTypeChat();
 });
