@@ -107,7 +107,10 @@ ContactSchema.statics = {
                 {"userId": contactId},
                 {"status": false}
             ]
-        }, {"status": true}).exec();
+        }, {
+            "status": true,
+            "updatedAt": Date.now()
+        }).exec();
     },
     /**
      * Get contact by userId and Limit
@@ -123,7 +126,7 @@ ContactSchema.statics = {
                 ]},
                 {"status": true}
             ]
-        }).sort({"createdAt": -1}).limit(limit).exec();
+        }).sort({"updatedAt": -1}).limit(limit).exec();
     },
     /**
      * Get sent contact by userId and Limit
@@ -205,7 +208,7 @@ ContactSchema.statics = {
                 ]},
                 {"status": true}
             ]
-        }).sort({"createdAt": -1}).skip(skip).limit(limit).exec();
+        }).sort({"updatedAt": -1}).skip(skip).limit(limit).exec();
     },
     /**
      * Read more sent contacts by userId, skip, limit
