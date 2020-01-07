@@ -1,9 +1,11 @@
 import contactModel from "./../models/contactModel";
 import userModel from "./../models/userModel";
 import chatGroupModel from "./../models/chatGroupModel";
+import messageModel from "./../models/messageModel";
 import _ from "lodash";
 
 const LIMIT_CONVERSATION_TAKEN = 15;
+const LIMIT_MESSAGE_TAKEN = 30;
 
 /**
  * Get all conversation
@@ -33,10 +35,27 @@ let getAllConversationItems = (currentUserId) => {
                 return -item.updatedAt;
             });
 
+            // get messages to apply into screen chat
+            let allConversationWithMessagesPromise = allConversations.map(async (conversation) => {
+                let getMessages = await messageModel.model.getMessages(currentUserId, conversation._id, LIMIT_MESSAGE_TAKEN);
+
+                conversation = conversation.toObject();
+                conversation.messages = getMessages;
+
+                return conversation;
+            });
+
+            let allConversationWithMessages = await Promise.all(allConversationWithMessagesPromise);
+            // sort by updatedAt descending
+            allConversationWithMessages = _.sortBy(allConversationWithMessages, (item) => {
+                return -item.updatedAt;
+            });
+
             resolve({
                 usersConversations: usersConversations,
                 groupConversations: groupConversations,
-                allConversations: allConversations
+                allConversations: allConversations,
+                allConversationWithMessages: allConversationWithMessages
             });
         } catch (error) {
             reject(error);
