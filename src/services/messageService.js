@@ -52,9 +52,6 @@ let getAllConversationItems = (currentUserId) => {
             });
 
             resolve({
-                usersConversations: usersConversations,
-                groupConversations: groupConversations,
-                allConversations: allConversations,
                 allConversationWithMessages: allConversationWithMessages
             });
         } catch (error) {
