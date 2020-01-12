@@ -25,6 +25,17 @@ ChatGroupSchema.statics = {
         return this.find({
             "members": {$elemMatch: {"userId": userId}}
         }).sort({"updatedAt": -1}).limit(limit).exec();
+    },
+
+    getChatGroupById(id) {
+        return this.findById(id).exec();
+    },
+
+    updateWhenHasNewMessage(id, newMessageAmount) {
+        return this.findByIdAndUpdate(id, {
+            "messageAmount": newMessageAmount,
+            "updatedAt": Date.now()
+        }).exec();
     }
 };
 

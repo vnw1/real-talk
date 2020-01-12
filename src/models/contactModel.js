@@ -237,6 +237,27 @@ ContactSchema.statics = {
                 {"status": false}
             ]
         }).sort({"createdAt": -1}).skip(skip).limit(limit).exec();
+    },
+    /**
+     * Update personal chat
+     * @param {string} userId 
+     * @param {string} contactId 
+     */
+    updateWhenHasNewMessage(userId, contactId) {
+        return this.updateOne({
+            $or: [
+                {$and: [
+                    {"userId": userId},
+                    {"contactId": contactId}
+                ]},
+                {$and: [
+                    {"userId": contactId},
+                    {"contactId": userId}
+                ]}
+            ]
+        }, {
+            "updatedAt": Date.now()
+        }).exec();
     }
 }
 
