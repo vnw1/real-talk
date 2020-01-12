@@ -38,9 +38,11 @@ function enableEmojioneArea(divId) {
     shortnames: false,
     events: {
       keyup: function(editor, event) {
+        // Assign value to the hidden input tag
         $(`#write-chat-${divId}`).val(this.getText());
       },
       click: function () {
+        // Enable DOM listener for texing and emoji
         textAndEmojiChat(divId);
       }
     },
@@ -211,5 +213,5 @@ $(document).ready(function() {
   changeScreenChat();
 
   // Focus the first conversation when refreshing page
-  $("ul.people").find("li")[0].click();
+  $("ul.people").find("a")[0].click();
 });
