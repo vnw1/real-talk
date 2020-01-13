@@ -1,5 +1,6 @@
 function textAndEmojiChat(divId) {
   $(".emojionearea").unbind("keyup").on("keyup", function (element) {
+      let currentEmojioneArea = $(this);
       if (element.which === 13) {
           let targetId = $(`#write-chat-${divId}`).data("chat");
           let messageVal = $(`#write-chat-${divId}`).val();
@@ -19,8 +20,37 @@ function textAndEmojiChat(divId) {
 
           // call send message
           $.post("/message/add-new-text-emoji", dataTextEmojiForSend, function (data) {
-              // success
-              console.log(data.message);
+              let messageOfMe = $(`<div class="bubble me data-mess-id="${data.message._id}"></div>`);
+              if (dataTextEmojiForSend.isChatGroup) {
+                messageOfMe.html(`<img src="/images/users/${data.message.sender.avatar}" class="avatar-small" title="${data.message.sender.name}">`);
+
+                messageOfMe.text(data.message.text);
+                increaseNumberMessageGroup(divId);
+              } else {
+                messageOfMe.text(data.message.text);
+              }
+
+              $(`.right .chat[data-chat=${divId}]`).append(messageOfMe);
+              nineScrollRight(divId);
+
+              // clear texting input after pressing enter
+              $(`#write-chat-${divId}`).val("");
+              currentEmojioneArea.find(".emojionearea-editor").text("");
+
+              // update preview message
+              $(`.person[data-chat=${divId}]`).find("span.time").html(moment(data.message.createdAt).locale("en").startOf("second").fromNow());
+              $(`.person[data-chat=${divId}]`).find("span.preview").html(data.message.text);
+
+              // move conversation to top
+              $(`.person[data-chat=${divId}]`).on("click.moveConversationToTheTop", function () {
+                  let dataToMove = $(this).parent();
+                  $(this).closest("ul").prepend(dataToMove);
+                  $(this).off("click.moveConversationToTheTop");
+              });
+              $(`.person[data-chat=${divId}]`).click();
+
+              // Emit realtime
+
           }).fail(function (res) {
               alertify.notify(res.responseText, "error", 7);
           });
