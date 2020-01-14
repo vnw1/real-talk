@@ -44,6 +44,12 @@ function enableEmojioneArea(divId) {
       click: function () {
         // Enable DOM listener for texing and emoji
         textAndEmojiChat(divId);
+        // Enable "is typing..." function
+        typingOn(divId);
+      },
+      blur: function () {
+        // Disable "is typing..." function
+        typingOff(divId);
       }
     },
   });
