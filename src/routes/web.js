@@ -62,6 +62,7 @@ let initRoutes = (app) => {
     router.put("/notification/mark-all-as-read", auth.checkLoggedIn, notification.markAllAsRead);
 
     router.post("/message/add-new-text-emoji", auth.checkLoggedIn, messageValid.checkMessageLength, message.addNewTextEmoji);
+    router.post("/message/add-new-image", auth.checkLoggedIn, message.addNewImage);
     
     return app.use("/", router);
 };
