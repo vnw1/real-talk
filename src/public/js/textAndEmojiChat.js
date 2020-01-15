@@ -23,7 +23,7 @@ function textAndEmojiChat(divId) {
               let dataToEmit = {
                 message: data.message
               };
-              let messageOfMe = $(`<div class="bubble me data-mess-id="${data.message._id}"></div>`);
+              let messageOfMe = $(`<div class="bubble me" data-mess-id="${data.message._id}"></div>`);
               messageOfMe.text(data.message.text);
 
               if (dataTextEmojiForSend.isChatGroup) {
@@ -57,7 +57,7 @@ function textAndEmojiChat(divId) {
               $(`.person[data-chat=${divId}]`).trigger("huyyagami.moveConversationToTheTop");
 
               // Emit realtime
-              socket.emit("chat-text-emoji", dataToEmit)
+              socket.emit("chat-text-emoji", dataToEmit);
 
               // Emit remove "is typing"
               typingOff(divId);
@@ -76,7 +76,7 @@ function textAndEmojiChat(divId) {
 $(document).ready(function () {
     socket.on("response-chat-text-emoji", function (response) {
       let divId = "";
-      let messageOfYou = $(`<div class="bubble you data-mess-id="${response.message._id}"></div>`);
+      let messageOfYou = $(`<div class="bubble you" data-mess-id="${response.message._id}"></div>`);
       messageOfYou.text(response.message.text);
 
       if (response.currentGroupId) {
@@ -94,7 +94,6 @@ $(document).ready(function () {
       }
 
       if (response.currentUserId !== $("#dropdown-navbar-user").data("uid")) {
-        console.log(true);
         $(`.right .chat[data-chat=${divId}]`).append(messageOfYou);
         nineScrollRight(divId);
         $(`.person[data-chat=${divId}]`).find("span.time").addClass("message-time-realtime");
