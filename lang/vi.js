@@ -24,7 +24,8 @@ export const transErrors = {
     user_current_password_failed: "Mật khẩu hiện tại không chính xác",
     conversation_not_found: "Cuộc trò chuyện không tồn tại",
     image_message_type: "Kiểu file không hợp lệ, chỉ chấp nhận jpg & png",
-    image_message_size: "Ảnh upload tối đa 1MB"
+    image_message_size: "Ảnh upload tối đa 1MB",
+    attachment_message_size: "File upload tối đa 1MB"
 };
 
 export const transSuccess = {
