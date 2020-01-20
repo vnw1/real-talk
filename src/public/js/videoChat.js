@@ -13,6 +13,18 @@ function videoChat(divId) {
     });
 };
 
+function playVideoStream(videoTagId, stream) {
+  let video = document.getElementById(videoTagId);  
+  video.srcObject = stream;
+  video.onloadeddata = function () {
+    video.play();
+  };
+};
+
+function closeVideoStream(stream) {
+    return stream.getTracks().forEach(track => track.stop());
+};
+
 $(document).ready(function () {
     // Step 2: show error message if listener is offline
     socket.on("server-send-listener-is-offline", function () {
@@ -20,7 +32,10 @@ $(document).ready(function () {
     });
 
     let getPeerId = "";
-    const peer = new Peer();
+    const peer = new Peer({
+        // debug: 3
+    });
+
     peer.on("open", function (peerId) {
         getPeerId = peerId;
     });
@@ -40,6 +55,8 @@ $(document).ready(function () {
 
     });
     
+    let timerInterval;
+
     // Step 5: server send peerId of listener to caller
     socket.on("server-send-peer-id-of-listener-to-caller", function (response) {
         let dataToEmit = {
@@ -53,7 +70,6 @@ $(document).ready(function () {
         // Step 6: 
         socket.emit("caller-request-call-to-server", dataToEmit);
 
-        let timerInterval;
         Swal.fire({
             title: `Calling &nbsp; <span style="color: #2ecc71;">${response.listenerName}</span> &nbsp; <i class="fa fa-volume-control-phone"><i>`,
             html: `Thời gian: <strong style="color: #d43f3a;"></strong> giây <br/> <br/>
@@ -73,10 +89,13 @@ $(document).ready(function () {
                     // Step 7: Caller request cancel call
                     socket.emit("caller-cancel-request-call-to-server", dataToEmit); 
                 });
-                Swal.showLoading();
-                timerInterval = setInterval(() => {
-                    Swal.getContent().querySelector("strong").textContent = Math.ceil(Swal.getTimerLeft() / 1000);
-                }, 1000);
+
+                if (Swal.getContent().querySelector !== null) {
+                    Swal.showLoading();
+                    timerInterval = setInterval(() => {
+                        Swal.getContent().querySelector("strong").textContent = Math.ceil(Swal.getTimerLeft() / 1000);
+                    }, 1000);
+                }
             },
             onOpen: () => {
                 // Step 12: server send reject request to caller
@@ -93,13 +112,6 @@ $(document).ready(function () {
                         confirmButtonColor: "#2ECC71",
                         confirmButtonText: "Xác nhận"
                     });
-                });
-
-                // Step 13: server send accept request to caller
-                socket.on("server-send-accept-call-to-caller", function (response) {
-                    Swal.close();
-                    clearInterval(timerInterval);
-                    console.log("caller ok");
                 });
             },
             onClose: () => {
@@ -120,7 +132,6 @@ $(document).ready(function () {
             listenerPeerId: response.listenerPeerId
         };
 
-        let timerInterval;
         Swal.fire({
             title: `<span style="color: #2ecc71;">${response.callerName}</span> &nbsp; is calling &nbsp; <i class="fa fa-volume-control-phone"><i>`,
             html: `Thời gian: <strong style="color: #d43f3a;"></strong> giây <br/> <br/>
@@ -152,23 +163,18 @@ $(document).ready(function () {
                     socket.emit("listener-accept-request-call-to-server", dataToEmit);
                 });
 
-                Swal.showLoading();
-                timerInterval = setInterval(() => {
-                    Swal.getContent().querySelector("strong").textContent = Math.ceil(Swal.getTimerLeft() / 1000);
-                }, 1000);
+                if (Swal.getContent().querySelector !== null) {
+                    Swal.showLoading();
+                    timerInterval = setInterval(() => {
+                        Swal.getContent().querySelector("strong").textContent = Math.ceil(Swal.getTimerLeft() / 1000);
+                    }, 1000);
+                }
             },
             onOpen: () => {
                 // Step 9: server send cancel request to listener
                 socket.on("server-send-cancel-request-call-to-listener", function (response) {
                     Swal.close();
                     clearInterval(timerInterval);
-                });
-
-                // Step 14: server send accept request to listener
-                socket.on("server-send-accept-call-to-listener", function (response) {
-                    Swal.close();
-                    clearInterval(timerInterval);
-                    console.log("listener ok");
                 });
             },
             onClose: () => {
@@ -177,5 +183,99 @@ $(document).ready(function () {
         }).then((result) => {
             return false;
         });
+    });
+
+    // Step 13: server send accept request to caller
+    socket.on("server-send-accept-call-to-caller", function (response) {
+        Swal.close();
+        clearInterval(timerInterval);
+
+        let getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia).bind(navigator);
+
+        getUserMedia({video: true, audio: true}, function(stream) {
+            // Show streaming modal
+            $("#streamModal").modal("show");
+
+            // Play my stream in local
+            playVideoStream("local-stream", stream);
+
+            // Call listener
+            let call = peer.call(response.listenerPeerId, stream);
+            
+            // Listen & play listener stream
+            call.on("stream", function(remoteStream) {
+                // Play listener stream
+                playVideoStream("remote-stream", remoteStream);
+            });
+
+            // Close modal: remove stream
+            $("#streamModal").on("hidden.bs.modal", function () {
+                closeVideoStream(stream);
+                Swal.fire({
+                    type: "info",
+                    title: `Call ended &nbsp; <span style="color: #2ecc71;">${response.listenerName}</span>`,
+                    backdrop: "rgba(85, 85, 85, 0.4)",
+                    width: "52rem",
+                    allowOutsideClick: false,
+                    confirmButtonColor: "#2ECC71",
+                    confirmButtonText: "Xác nhận"
+                });
+            });
+          }, function(err) {
+            console.log("Failed to get local stream" ,err.toString());
+            if (err.toString() === "NotAllowedError: Permission denied") {
+                alertify.notify("Please allow camera and microphone access", "error", 7);
+            }
+            if (err.toString() === "NotFoundError: Requested device not found") {
+                alertify.notify("Can not find camera on this computer", "error", 7);
+            }
+          });
+    });
+
+    // Step 14: server send accept request to listener
+    socket.on("server-send-accept-call-to-listener", function (response) {
+        Swal.close();
+        clearInterval(timerInterval);
+
+        let getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia).bind(navigator);
+        
+        peer.on("call", function(call) {
+            getUserMedia({video: true, audio: true}, function(stream) {
+                // Show streaming modal
+                $("#streamModal").modal("show");
+
+                // Play my stream in local (listener)
+                playVideoStream("local-stream", stream);
+
+                call.answer(stream); // Answer the call with an A/V stream.
+
+                call.on("stream", function(remoteStream) {
+                    // Play caller stream
+                    playVideoStream("remote-stream", remoteStream);
+                });
+
+                // Close modal: remove stream
+                $("#streamModal").on("hidden.bs.modal", function () {
+                    closeVideoStream(stream);
+                    Swal.fire({
+                        type: "info",
+                        title: `Call ended &nbsp; <span style="color: #2ecc71;">${response.callerName}</span>`,
+                        backdrop: "rgba(85, 85, 85, 0.4)",
+                        width: "52rem",
+                        allowOutsideClick: false,
+                        confirmButtonColor: "#2ECC71",
+                        confirmButtonText: "Xác nhận"
+                    });
+                });
+            }, function(err) {
+              console.log("Failed to get local stream" ,err.toString());
+                if (err.toString() === "NotAllowedError: Permission denied") {
+                    alertify.notify("Please allow camera and microphone access", "error", 7);
+                }
+                if (err.toString() === "NotFoundError: Requested device not found") {
+                    alertify.notify("Can not find camera on this computer", "error", 7);
+                }
+            });
+        });          
     });
 });
