@@ -29,3 +29,6 @@ export FB_CALLBACK_URL=xxx
 export GG_APP_ID=xxx
 export GG_APP_SECRET=xxx
 export GG_CALLBACK_URL=xxx
+
+# Turn server secret key
+export TURN_SERVER_KEY=xxx-xxx-xxx

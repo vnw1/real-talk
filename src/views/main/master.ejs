@@ -18,7 +18,8 @@
 <body onload="spinLoaded()">
     <!--css main loader-->
     <div class="master-loader"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-    
+    <input type="hidden" id="ice-server-list" value="<%= iceServerList %>">
+
     <%- include("alert/alert"); %>
 
     <%- include("navbar/navbar"); %>
@@ -65,6 +66,7 @@
     <script src="js/typingOnOff.js"></script>
     <script src="js/imageChat.js"></script>
     <script src="js/attachmentChat.js"></script>
+    <script src="js/videoChat.js"></script>
 
     <%- include("contact/contactModal"); %>
 
