@@ -31,9 +31,12 @@ $(document).ready(function () {
        alertify.notify("This user is currently offline", "error", 7); 
     });
 
+    let iceServerList = $("#ice-server-list").val();
+
     let getPeerId = "";
     const peer = new Peer({
         // debug: 3
+        config: {"iceServers": JSON.parse(iceServerList)}
     });
 
     peer.on("open", function (peerId) {
