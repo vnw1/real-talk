@@ -4,34 +4,35 @@ import request from "request";
 
 let getICETurnServer = () => {
     return new Promise(async (resolve, reject) => {
-        // Node Get ICE STUN and TURN list
-    let o = {
-        format: "urls"
-    };
+    // // Node Get ICE STUN and TURN list
+    // let o = {
+    //     format: "urls"
+    // };
 
-    let bodyString = JSON.stringify(o);
+    // let bodyString = JSON.stringify(o);
 
-    let options = {
-        url: "https://global.xirsys.net/_turn/real-talk",
-        // host: "global.xirsys.net",
-        // path: "/_turn/real-talk",
-        method: "PUT",
-        headers: {
-            "Authorization": "Basic " + Buffer.from(`vnw1:${process.env.TURN_SERVER_KEY}`).toString("base64"),
-            "Content-Type": "application/json",
-            "Content-Length": bodyString.length
-        }
-    };
+    // let options = {
+    //     url: "https://global.xirsys.net/_turn/real-talk",
+    //     // host: "global.xirsys.net",
+    //     // path: "/_turn/real-talk",
+    //     method: "PUT",
+    //     headers: {
+    //         "Authorization": "Basic " + Buffer.from(`vnw1:${process.env.TURN_SERVER_KEY}`).toString("base64"),
+    //         "Content-Type": "application/json",
+    //         "Content-Length": bodyString.length
+    //     }
+    // };
 
-    // Request ICE turn server
-    request(options, (error, response, body) => {
-        if (error) {
-            console.log("Error when get ICE list: " + error);
-            return reject(error);
-        }
-        let bodyJson = JSON.parse(body);
-        resolve(bodyJson.v.iceServers);
-    });
+    // // Request ICE turn server
+    // request(options, (error, response, body) => {
+    //     if (error) {
+    //         console.log("Error when get ICE list: " + error);
+    //         return reject(error);
+    //     }
+    //     let bodyJson = JSON.parse(body);
+    //     resolve(bodyJson.v.iceServers);
+    // });
+    resolve([]);
     });
 };
 
