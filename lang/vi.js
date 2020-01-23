@@ -8,7 +8,9 @@ export const transValidation = {
     update_address: "Địa chỉ giới hạn trong khoảng 3~30 ký tự",
     update_phone: "Số điện thoại phải bắt đầu bằng số 0. giới hạn 10~11 ký tự",
     keyword_find_user: "Chỉ cho phép tìm kiếm chữ cái, số và khoảng trắng",
-    message_text_emoji_incorrect: "Tin nhắn không được để trống và chỉ được tối đa 400 ký tự"
+    message_text_emoji_incorrect: "Tin nhắn không được để trống và chỉ được tối đa 400 ký tự",
+    add_new_group_users_incorrect: "Cần thêm tối thiểu 2 người để tạo group chat",
+    add_new_group_name_incorrect: "Chỉ cho phép nhập 5 đến 30 ký tự và không chứa ký tự đặc biệt"
 };
 
 export const transErrors = {

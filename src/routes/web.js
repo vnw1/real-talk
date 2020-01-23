@@ -1,6 +1,6 @@
 import express from "express";
-import {home, auth, user, contact, notification, message} from "./../controllers/index";
-import {authValid, userValid, contactValid, messageValid} from "./../validation/index";
+import {home, auth, user, contact, notification, message, groupChat} from "./../controllers/index";
+import {authValid, userValid, contactValid, messageValid, groupChatValid} from "./../validation/index";
 import passport from "passport";
 import initPassportLocal from "./../controllers/PassportController/local";
 import initPassportFacebook from "./../controllers/PassportController/facebook";
@@ -65,6 +65,8 @@ let initRoutes = (app) => {
     router.post("/message/add-new-text-emoji", auth.checkLoggedIn, messageValid.checkMessageLength, message.addNewTextEmoji);
     router.post("/message/add-new-image", auth.checkLoggedIn, message.addNewImage);
     router.post("/message/add-new-attachment", auth.checkLoggedIn, message.addNewAttachment);
+
+    router.post("/group-chat/add-new", auth.checkLoggedIn, groupChatValid.addNewGroup, groupChat.addNewGroup);
     
     return app.use("/", router);
 };
