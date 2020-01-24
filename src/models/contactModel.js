@@ -258,6 +258,21 @@ ContactSchema.statics = {
         }, {
             "updatedAt": Date.now()
         }).exec();
+    },
+    /**
+     * Get contact friends by userId
+     * @param {string} userId
+     */
+    getFriends(userId, limit){
+        return this.find({
+            $and: [
+                {$or: [
+                    {"userId": userId},
+                    {"contactId": userId}
+                ]},
+                {"status": true}
+            ]
+        }).sort({"updatedAt": -1}).exec();
     }
 }
 

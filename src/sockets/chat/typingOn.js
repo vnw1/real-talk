@@ -11,6 +11,15 @@ let typingOn = (io) => {
         socket.request.user.chatGroupIds.forEach(group => {
             clients = pushSocketIdToArray(clients, group._id, socket.id);  
         });
+
+        // When there are new group chat
+        socket.on("new-group-created", (data) => {
+            clients = pushSocketIdToArray(clients, data.groupChat._id, socket.id);
+        });
+        socket.on("member-received-group-chat", (data) => {
+            clients = pushSocketIdToArray(clients, data.groupChatId, socket.id);
+        });
+
         socket.on("user-is-typing", (data) => {
            if (data.groupId) {
                 let response = {

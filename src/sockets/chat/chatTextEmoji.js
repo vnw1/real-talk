@@ -5,12 +5,21 @@ import {pushSocketIdToArray, emitNotifyToArray, removeSocketIdFromArray} from ".
  */
 let chatTextEmoji = (io) => {
     let clients = {};
-   io.on("connection", (socket) => {
+    io.on("connection", (socket) => {
         // push socket id to array
         clients = pushSocketIdToArray(clients, socket.request.user._id, socket.id);
         socket.request.user.chatGroupIds.forEach(group => {
             clients = pushSocketIdToArray(clients, group._id, socket.id);  
         });
+
+        // When there are new group chat
+        socket.on("new-group-created", (data) => {
+            clients = pushSocketIdToArray(clients, data.groupChat._id, socket.id);
+        });
+        socket.on("member-received-group-chat", (data) => {
+            clients = pushSocketIdToArray(clients, data.groupChatId, socket.id);
+        });
+
         socket.on("chat-text-emoji", (data) => {
            if (data.groupId) {
                 let response = {

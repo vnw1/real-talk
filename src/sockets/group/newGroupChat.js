@@ -3,30 +3,30 @@ import {pushSocketIdToArray, emitNotifyToArray, removeSocketIdFromArray} from ".
 /**
  * @param io from socket.io lib 
  */
-let userOnlineOffline = (io) => {
+let newGroupChat = (io) => {
     let clients = {};
    io.on("connection", (socket) => {
         // push socket id to array
         clients = pushSocketIdToArray(clients, socket.request.user._id, socket.id);
         socket.request.user.chatGroupIds.forEach(group => {
-            clients = pushSocketIdToArray(clients, group._id, socket.id);  
+            clients = pushSocketIdToArray(clients, group._id, socket.id);
         });
-
-        // When there are new group chat
         socket.on("new-group-created", (data) => {
             clients = pushSocketIdToArray(clients, data.groupChat._id, socket.id);
+
+            let response = {
+                groupChat: data.groupChat
+            };
+
+            data.groupChat.members.forEach(member => {
+                if (clients[member.userId] && member.userId != socket.request.user._id) {
+                    emitNotifyToArray(clients, member.userId, io, "response-new-group-created", response);
+                }
+            });
         });
+
         socket.on("member-received-group-chat", (data) => {
             clients = pushSocketIdToArray(clients, data.groupChatId, socket.id);
-        });
-
-        socket.on("check-status", () => {
-            let listUsersOnline = Object.keys(clients);
-            // Step 1: Emit to user after login or refresh web page
-            socket.emit("server-send-list-users-online", listUsersOnline);
-
-            // Step 2: Emit to other users when there are user online
-            socket.broadcast.emit("server-send-when-new-user-online", socket.request.user._id);
         });
        
         socket.on("disconnect", () => {
@@ -35,11 +35,8 @@ let userOnlineOffline = (io) => {
         socket.request.user.chatGroupIds.forEach(group => {
             clients = removeSocketIdFromArray(clients, group._id, socket);
         });
-        // Step 3: Emit to other users when there are user offline
-        socket.broadcast.emit("server-send-when-new-user-offline", socket.request.user._id);
-
        });
    }); 
 }
 
-module.exports = userOnlineOffline;
+module.exports = newGroupChat;
