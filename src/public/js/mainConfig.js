@@ -211,7 +211,9 @@ $(document).ready(function() {
   changeScreenChat();
 
   // Focus the first conversation when refreshing page
-  $("ul.people").find("a")[0].click();
+  if ($("ul.people").find("a").length) {
+    $("ul.people").find("a")[0].click();
+  }
 
   $("#video-chat-group").bind("click", function () {
     alertify.notify("This function is not available in group chat", "error", 7);
