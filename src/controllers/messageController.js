@@ -4,6 +4,12 @@ import multer from "multer";
 import {app} from "./../config/app";
 import {transErrors, transSuccess} from "./../../lang/vi";
 import fsExtra from "fs-extra";
+import ejs from "ejs";
+import {lastItemOfArray, convertTimeStampToHumanTime, bufferToBase64} from "./../helpers/clientHelper";
+import {promisify} from "util";
+
+// Make function renderFile async-able
+const renderFile = promisify(ejs.renderFile).bind(ejs);
 
 // Handle text and emoji chat
 let addNewTextEmoji = async (req, res) => {
@@ -131,8 +137,42 @@ let addNewAttachment = (req, res) => {
     });
 };
 
+let readMoreAllChat = async (req, res) => {
+    try {
+        // get skip number from query param
+        let skipPersonal = +(req.query.skipPersonal);
+        let skipGroup = +(req.query.skipGroup);
+
+        // get more item
+        let newAllConversations = await message.readMoreAllChat(req.user._id, skipPersonal, skipGroup);
+
+        let dataToRender = {
+            newAllConversations: newAllConversations,
+            lastItemOfArray: lastItemOfArray,
+            convertTimeStampToHumanTime: convertTimeStampToHumanTime,
+            bufferToBase64: bufferToBase64,
+            user: req.user
+        };
+
+        let leftSideData = await renderFile("src/views/main/readMoreConversations/_leftSide.ejs", dataToRender);
+        let rightSideData = await renderFile("src/views/main/readMoreConversations/_rightSide.ejs", dataToRender);
+        let imageModalData = await renderFile("src/views/main/readMoreConversations/_imageModal.ejs", dataToRender);
+        let attachmentModalData = await renderFile("src/views/main/readMoreConversations/_attachmentModal.ejs", dataToRender);
+
+        return res.status(200).send({
+            leftSideData: leftSideData,
+            rightSideData: rightSideData,
+            imageModalData: imageModalData,
+            attachmentModalData: attachmentModalData
+        });
+    } catch (error) {
+        return res.status(500).send(error);
+    }
+};
+
 module.exports = {
     addNewTextEmoji: addNewTextEmoji,
     addNewImage: addNewImage,
-    addNewAttachment: addNewAttachment
+    addNewAttachment: addNewAttachment,
+    readMoreAllChat: readMoreAllChat
 };
